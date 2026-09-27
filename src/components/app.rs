@@ -79,6 +79,13 @@ struct LowkeyWorkspacesApplet {
 }
 
 impl LowkeyWorkspacesApplet {
+    /// Padding on each side of a workspace indicator along the panel.
+    fn spacing(&self) -> u16 {
+        self.config
+            .spacing
+            .unwrap_or(self.core.applet.suggested_padding(true).1)
+    }
+
     /// returns the index of the workspace button after which which must be moved to a popup
     /// if it exists.
     fn popup_index(&self) -> Option<usize> {
@@ -92,9 +99,7 @@ impl LowkeyWorkspacesApplet {
         }) else {
             return index;
         };
-        let button_total_size = self.core.applet.suggested_size(true).0
-            + self.core.applet.suggested_padding(true).1 * 2
-            + 4;
+        let button_total_size = self.core.applet.suggested_size(true).0 + self.spacing() * 2 + 4;
         let btn_count = max_major_axis_len / button_total_size as u32;
         if btn_count >= self.workspaces.len() as u32 {
             index = None;
@@ -249,37 +254,24 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
             self.core.applet.anchor,
             PanelAnchor::Top | PanelAnchor::Bottom
         );
-        let suggested_total = self.core.applet.suggested_size(true).0
-            + self.core.applet.suggested_padding(true).1 * 2;
+        // Outer edges keep the panel padding, only the space between buttons changes.
+        let panel_padding = self.core.applet.suggested_padding(true).1;
+        let padding = self.spacing().min(panel_padding);
+        let gap = 4 + 2 * self.spacing().saturating_sub(panel_padding);
+        let edge = panel_padding - padding;
+        let suggested_total = self.core.applet.suggested_size(true).0 + padding * 2;
         let suggested_window_size = self.core.applet.suggested_window_size();
         let popup_index = self.popup_index().unwrap_or(self.workspaces.len());
 
-        let dot_size = (self.core.applet.suggested_size(true).0 / 2) as f32;
-
         let buttons = self.workspaces[..popup_index].iter().map(|w| {
             let config = self.config;
-            let state = w.state;
-            let content: Element<_> = if config.show_dots {
-                container(space::horizontal().width(Length::Fixed(dot_size)))
-                    .height(Length::Fixed(dot_size))
-                    .class(cosmic::theme::Container::custom(move |theme| {
-                        container::Style {
-                            background: Some(Background::Color(label_color(config, state, theme))),
-                            border: Border {
-                                radius: (dot_size / 2.0).into(),
-                                ..Default::default()
-                            },
-                            ..container::Style::default()
-                        }
-                    }))
-                    .into()
-            } else {
-                self.core
-                    .applet
-                    .text(&w.name)
-                    .font(cosmic::font::bold())
-                    .into()
+            let hover_config = WorkspacesConfig {
+                inactive_opacity: (config.inactive_opacity + 0.2).min(1.0),
+                ..config
             };
+            let state = w.state;
+            let label = if config.show_dots { "●" } else { &w.name };
+            let content = self.core.applet.text(label).font(cosmic::font::bold());
 
             let (width, height) = if self.core.applet.is_horizontal() {
                 (suggested_total as f32, suggested_window_size.1.get() as f32)
@@ -330,7 +322,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                             button::Status::Active => appearance(theme),
                             button::Status::Hovered => button::Style {
                                 background: Some(Background::Color(
-                                    theme.current_container().component.hover.into(),
+                                    theme.cosmic().text_button.hover.into(),
                                 )),
                                 border: Border {
                                     radius: theme.cosmic().radius_xl().into(),
@@ -338,7 +330,12 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                                 },
                                 ..appearance(theme)
                             },
-                            button::Status::Pressed => appearance(theme),
+                            button::Status::Pressed => button::Style {
+                                background: Some(Background::Color(
+                                    theme.cosmic().text_button.pressed.into(),
+                                )),
+                                ..appearance(theme)
+                            },
                             button::Status::Disabled => appearance(theme),
                         },
                     ))
@@ -356,20 +353,30 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                             ..button::Style::default()
                         }
                     };
+                    let hovered = move |theme: &Theme| button::Style {
+                        text_color: label_color(hover_config, state, theme),
+                        ..appearance(theme)
+                    };
                     cosmic::theme::iced::Button::Custom(Box::new(
                         move |theme, status| match status {
                             button::Status::Active => appearance(theme),
                             button::Status::Hovered => button::Style {
                                 background: Some(Background::Color(
-                                    theme.current_container().component.hover.into(),
+                                    theme.cosmic().text_button.hover.into(),
                                 )),
                                 border: Border {
                                     radius: theme.cosmic().radius_xl().into(),
                                     ..Default::default()
                                 },
-                                ..appearance(theme)
+                                ..hovered(theme)
                             },
-                            button::Status::Pressed | button::Status::Disabled => appearance(theme),
+                            button::Status::Pressed => button::Style {
+                                background: Some(Background::Color(
+                                    theme.cosmic().text_button.pressed.into(),
+                                )),
+                                ..hovered(theme)
+                            },
+                            button::Status::Disabled => appearance(theme),
                         },
                     ))
                 },
@@ -379,8 +386,8 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
         // TODO if there is a popup_index, create a button with a popup for the remaining workspaces
         // Should it appear on hover or on click?
         let layout_section: Element<_> = match self.layout {
-            Layout::Row => row(buttons).spacing(4).into(),
-            Layout::Column => column(buttons).spacing(4).into(),
+            Layout::Row => row(buttons).spacing(gap).padding([0, edge]).into(),
+            Layout::Column => column(buttons).spacing(gap).padding([edge, 0]).into(),
         };
         let mut limits = Limits::NONE.min_width(1.).min_height(1.);
         if let Some(b) = self.core.applet.suggested_bounds {
@@ -453,6 +460,16 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 .map(|chunk| row(chunk.iter().copied().map(swatch)).spacing(8).into()),
         )
         .spacing(8);
+        let heading_with_value = |heading: String, value: String| {
+            padded_control(
+                row![
+                    text::heading(heading),
+                    space::horizontal().width(Length::Fill),
+                    text::body(value),
+                ]
+                .align_y(Alignment::Center),
+            )
+        };
 
         let content = column![
             padded_control(
@@ -472,13 +489,9 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
             padded_control(text::heading(fl!("active-color"))),
             padded_control(swatches),
             padded_control(divider::horizontal::default()),
-            padded_control(
-                row![
-                    text::heading(fl!("inactive-opacity")),
-                    space::horizontal().width(Length::Fill),
-                    text::body(format!("{:.0}%", config.inactive_opacity * 100.0)),
-                ]
-                .align_y(Alignment::Center)
+            heading_with_value(
+                fl!("inactive-opacity"),
+                format!("{:.0}%", config.inactive_opacity * 100.0)
             ),
             padded_control(
                 slider(
@@ -493,6 +506,14 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 )
                 .step(0.05)
             ),
+            padded_control(divider::horizontal::default()),
+            heading_with_value(fl!("spacing"), format!("{} px", self.spacing())),
+            padded_control(slider(0..=16, self.spacing(), move |spacing| {
+                Message::SetConfig(WorkspacesConfig {
+                    spacing: Some(spacing),
+                    ..config
+                })
+            })),
         ]
         .padding([8, 0]);
 
