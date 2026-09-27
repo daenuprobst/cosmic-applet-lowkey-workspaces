@@ -1,0 +1,14 @@
+// Copyright 2023 System76 <info@system76.com>
+// Copyright 2026 Daniel Probst <daenuprobst@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+fn main() -> cosmic::iced::Result {
+    tracing_subscriber::fmt::init();
+    let _ = tracing_log::LogTracer::init();
+
+    tracing::info!("Starting Lowkey Workspaces applet with version {VERSION}");
+
+    cosmic_applet_lowkey_workspaces::run()
+}
