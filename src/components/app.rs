@@ -301,15 +301,18 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 (suggested_window_size.0.get() as f32, suggested_total as f32)
             };
 
-            let content: Element<_> = if circle {
-                container(content).center(diameter).into()
+            let slot = (width, height);
+            let (width, height) = if circle {
+                (f32::from(diameter), f32::from(diameter))
             } else {
-                let content = row!(content, space::vertical().height(Length::Fixed(height)))
-                    .align_y(Alignment::Center);
-                column!(content, space::horizontal().width(Length::Fixed(width)))
-                    .align_x(Alignment::Center)
-                    .into()
+                slot
             };
+
+            let content = row!(content, space::vertical().height(Length::Fixed(height)))
+                .align_y(Alignment::Center);
+
+            let content = column!(content, space::horizontal().width(Length::Fixed(width)))
+                .align_x(Alignment::Center);
 
             let btn = button(content)
                 .padding(if horizontal {
@@ -416,7 +419,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
             );
 
             if circle {
-                container(btn).center_x(width).center_y(height).into()
+                container(btn).center_x(slot.0).center_y(slot.1).into()
             } else {
                 btn.into()
             }
