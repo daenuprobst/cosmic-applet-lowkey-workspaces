@@ -1,4 +1,6 @@
 show-dots = 数字の代わりにドットを表示
+show-circles = 数字の背後に円を表示
+circle-size = 円のサイズ
 active-color = アクティブなワークスペースの色
 inactive-opacity = 非アクティブなワークスペースの不透明度
 spacing = ワークスペースの間隔

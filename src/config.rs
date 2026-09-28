@@ -17,6 +17,8 @@ pub struct WorkspacesConfig {
     pub active_color: ActiveColor,
     pub inactive_opacity: f32,
     pub show_dots: bool,
+    pub show_circles: bool,
+    pub circle_size: Option<u16>,
     pub spacing: Option<u16>,
 }
 
@@ -26,6 +28,8 @@ impl Default for WorkspacesConfig {
             active_color: ActiveColor::Accent,
             inactive_opacity: 1.0,
             show_dots: false,
+            show_circles: false,
+            circle_size: None,
             spacing: None,
         }
     }

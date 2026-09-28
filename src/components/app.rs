@@ -58,6 +58,17 @@ fn label_color(
     }
 }
 
+/// Black or white, whichever reads better on `color`, with its opacity.
+fn on_color(color: Color) -> Color {
+    let luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+    let on = if luminance > 0.5 {
+        Color::BLACK
+    } else {
+        Color::WHITE
+    };
+    Color { a: color.a, ..on }
+}
+
 pub fn run() -> cosmic::iced::Result {
     cosmic::applet::run::<LowkeyWorkspacesApplet>(())
 }
@@ -84,6 +95,12 @@ impl LowkeyWorkspacesApplet {
         self.config
             .spacing
             .unwrap_or(self.core.applet.suggested_padding(true).1)
+    }
+
+    fn circle_size(&self) -> u16 {
+        self.config
+            .circle_size
+            .unwrap_or(self.core.applet.suggested_size(true).0 + 4)
     }
 
     /// returns the index of the workspace button after which which must be moved to a popup
@@ -259,7 +276,12 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
         let padding = self.spacing().min(panel_padding);
         let gap = 4 + 2 * self.spacing().saturating_sub(panel_padding);
         let edge = panel_padding - padding;
-        let suggested_total = self.core.applet.suggested_size(true).0 + padding * 2;
+        let circle = self.config.show_circles && !self.config.show_dots;
+        let diameter = self.circle_size();
+        let mut suggested_total = self.core.applet.suggested_size(true).0 + padding * 2;
+        if circle {
+            suggested_total = suggested_total.max(diameter);
+        }
         let suggested_window_size = self.core.applet.suggested_window_size();
         let popup_index = self.popup_index().unwrap_or(self.workspaces.len());
 
@@ -279,11 +301,15 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 (suggested_window_size.0.get() as f32, suggested_total as f32)
             };
 
-            let content = row!(content, space::vertical().height(Length::Fixed(height)))
-                .align_y(Alignment::Center);
-
-            let content = column!(content, space::horizontal().width(Length::Fixed(width)))
-                .align_x(Alignment::Center);
+            let content: Element<_> = if circle {
+                container(content).center(diameter).into()
+            } else {
+                let content = row!(content, space::vertical().height(Length::Fixed(height)))
+                    .align_y(Alignment::Center);
+                column!(content, space::horizontal().width(Length::Fixed(width)))
+                    .align_x(Alignment::Center)
+                    .into()
+            };
 
             let btn = button(content)
                 .padding(if horizontal {
@@ -300,9 +326,10 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 )
                 .padding(0);
 
-            btn.class(
+            let btn = btn.class(
                 if w.state.contains(ext_workspace_handle_v1::State::Urgent)
                     && !w.state.contains(ext_workspace_handle_v1::State::Active)
+                    && !circle
                 {
                     let appearance = |theme: &Theme| {
                         let cosmic = theme.cosmic();
@@ -340,26 +367,32 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                         },
                     ))
                 } else {
-                    let appearance = move |theme: &Theme| {
-                        let cosmic = theme.cosmic();
+                    let style = move |theme: &Theme, config| {
+                        let color = label_color(config, state, theme);
+                        let radius = if circle {
+                            [diameter as f32 / 2.0; 4]
+                        } else {
+                            theme.cosmic().radius_xl()
+                        };
                         button::Style {
-                            background: None,
+                            background: circle.then_some(Background::Color(color)),
                             border: Border {
-                                radius: cosmic.radius_xl().into(),
+                                radius: radius.into(),
                                 ..Default::default()
                             },
-                            border_radius: cosmic.radius_xl().into(),
-                            text_color: label_color(config, state, theme),
+                            border_radius: radius.into(),
+                            text_color: if circle { on_color(color) } else { color },
                             ..button::Style::default()
                         }
                     };
-                    let hovered = move |theme: &Theme| button::Style {
-                        text_color: label_color(hover_config, state, theme),
-                        ..appearance(theme)
-                    };
+                    let appearance = move |theme: &Theme| style(theme, config);
+                    let hovered = move |theme: &Theme| style(theme, hover_config);
                     cosmic::theme::iced::Button::Custom(Box::new(
                         move |theme, status| match status {
                             button::Status::Active => appearance(theme),
+                            button::Status::Hovered | button::Status::Pressed if circle => {
+                                hovered(theme)
+                            }
                             button::Status::Hovered => button::Style {
                                 background: Some(Background::Color(
                                     theme.cosmic().text_button.hover.into(),
@@ -380,8 +413,13 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                         },
                     ))
                 },
-            )
-            .into()
+            );
+
+            if circle {
+                container(btn).center_x(width).center_y(height).into()
+            } else {
+                btn.into()
+            }
         });
         // TODO if there is a popup_index, create a button with a popup for the remaining workspaces
         // Should it appear on hover or on click?
@@ -471,20 +509,48 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
             )
         };
 
-        let content = column![
+        let display = column![padded_control(
+            row![
+                text::heading(fl!("show-dots")),
+                space::horizontal().width(Length::Fill),
+                toggler(config.show_dots).on_toggle(move |show_dots| Message::SetConfig(
+                    WorkspacesConfig {
+                        show_dots,
+                        ..config
+                    }
+                )),
+            ]
+            .align_y(Alignment::Center)
+        )]
+        .push_maybe((!config.show_dots).then(|| {
             padded_control(
                 row![
-                    text::heading(fl!("show-dots")),
+                    text::heading(fl!("show-circles")),
                     space::horizontal().width(Length::Fill),
-                    toggler(config.show_dots).on_toggle(move |show_dots| Message::SetConfig(
-                        WorkspacesConfig {
-                            show_dots,
+                    toggler(config.show_circles).on_toggle(move |show_circles| {
+                        Message::SetConfig(WorkspacesConfig {
+                            show_circles,
                             ..config
-                        }
-                    )),
+                        })
+                    }),
                 ]
-                .align_y(Alignment::Center)
-            ),
+                .align_y(Alignment::Center),
+            )
+        }))
+        .push_maybe((config.show_circles && !config.show_dots).then(|| {
+            column![
+                heading_with_value(fl!("circle-size"), format!("{} px", self.circle_size())),
+                padded_control(slider(8..=32, self.circle_size(), move |size| {
+                    Message::SetConfig(WorkspacesConfig {
+                        circle_size: Some(size),
+                        ..config
+                    })
+                })),
+            ]
+        }));
+
+        let content = column![
+            display,
             padded_control(divider::horizontal::default()),
             padded_control(text::heading(fl!("active-color"))),
             padded_control(swatches),
