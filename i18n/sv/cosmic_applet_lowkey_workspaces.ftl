@@ -1,5 +1,6 @@
 show-dots = Visa punkter i stället för siffror
 show-circles = Visa cirklar bakom siffror
+invert-numbers = Invertera sifferfärg
 circle-size = Cirkelstorlek
 active-color = Färg på aktiv arbetsyta
 inactive-opacity = Opacitet för inaktiva arbetsytor

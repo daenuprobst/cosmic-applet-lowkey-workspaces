@@ -1,5 +1,6 @@
 show-dots = Afichar de ponches al luòc dels numèros
 show-circles = Afichar de cercles darrièr los numèros
+invert-numbers = Inversar la color dels numèros
 circle-size = Talha dels cercles
 active-color = Color de l'espaci de trabalh actiu
 inactive-opacity = Opacitat dels espacis de trabalh inactius

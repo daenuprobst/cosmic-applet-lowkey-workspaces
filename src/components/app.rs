@@ -58,10 +58,10 @@ fn label_color(
     }
 }
 
-/// Black or white, whichever reads better on `color`, with its opacity.
-fn on_color(color: Color) -> Color {
+/// Black or white, whichever reads better on `color` unless inverted, with its opacity.
+fn on_color(color: Color, invert: bool) -> Color {
     let luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-    let on = if luminance > 0.5 {
+    let on = if (luminance > 0.5) != invert {
         Color::BLACK
     } else {
         Color::WHITE
@@ -384,7 +384,11 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                                 ..Default::default()
                             },
                             border_radius: radius.into(),
-                            text_color: if circle { on_color(color) } else { color },
+                            text_color: if circle {
+                                on_color(color, config.invert_numbers)
+                            } else {
+                                color
+                            },
                             ..button::Style::default()
                         }
                     };
@@ -542,6 +546,19 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
         }))
         .push_maybe((config.show_circles && !config.show_dots).then(|| {
             column![
+                padded_control(
+                    row![
+                        text::heading(fl!("invert-numbers")),
+                        space::horizontal().width(Length::Fill),
+                        toggler(config.invert_numbers).on_toggle(move |invert_numbers| {
+                            Message::SetConfig(WorkspacesConfig {
+                                invert_numbers,
+                                ..config
+                            })
+                        }),
+                    ]
+                    .align_y(Alignment::Center),
+                ),
                 heading_with_value(fl!("circle-size"), format!("{} px", self.circle_size())),
                 padded_control(slider(8..=32, self.circle_size(), move |size| {
                     Message::SetConfig(WorkspacesConfig {

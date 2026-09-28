@@ -1,5 +1,6 @@
 show-dots = Tunjukkan titik dan bukan nombor
 show-circles = Tunjukkan bulatan di belakang nombor
+invert-numbers = Songsangkan warna nombor
 circle-size = Saiz bulatan
 active-color = Warna ruang kerja aktif
 inactive-opacity = Kelegapan ruang kerja tidak aktif

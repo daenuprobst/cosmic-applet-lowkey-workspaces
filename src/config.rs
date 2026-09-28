@@ -19,6 +19,7 @@ pub struct WorkspacesConfig {
     pub show_dots: bool,
     pub show_circles: bool,
     pub circle_size: Option<u16>,
+    pub invert_numbers: bool,
     pub spacing: Option<u16>,
 }
 
@@ -30,6 +31,7 @@ impl Default for WorkspacesConfig {
             show_dots: false,
             show_circles: false,
             circle_size: None,
+            invert_numbers: false,
             spacing: None,
         }
     }

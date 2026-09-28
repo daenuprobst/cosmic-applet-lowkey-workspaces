@@ -1,5 +1,6 @@
 show-dots = Prikaži točke umjesto brojeva
 show-circles = Prikaži krugove iza brojeva
+invert-numbers = Obrni boju brojeva
 circle-size = Veličina kruga
 active-color = Boja aktivnog radnog prostora
 inactive-opacity = Neprozirnost neaktivnih radnih prostora
