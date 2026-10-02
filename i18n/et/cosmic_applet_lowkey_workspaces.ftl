@@ -5,3 +5,6 @@ circle-size = Ringi suurus
 active-color = Aktiivse tööala värv
 inactive-opacity = Mitteaktiivsete tööalade läbipaistmatus
 spacing = Tööalade vahe
+icons = Ikoonid numbrite asemel
+search-symbols = Otsi sümboleid
+no-nerd-font = Nerd Fonti pole paigaldatud

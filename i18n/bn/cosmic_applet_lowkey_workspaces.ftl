@@ -5,3 +5,6 @@ circle-size = বৃত্তের আকার
 active-color = সক্রিয় ওয়ার্কস্পেসের রং
 inactive-opacity = নিষ্ক্রিয় ওয়ার্কস্পেসের অস্বচ্ছতা
 spacing = ওয়ার্কস্পেসের মধ্যে ব্যবধান
+icons = সংখ্যার বদলে আইকন
+search-symbols = চিহ্ন খুঁজুন
+no-nerd-font = কোনো Nerd Font ইনস্টল করা নেই

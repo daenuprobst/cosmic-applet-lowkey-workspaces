@@ -5,3 +5,6 @@ circle-size = حجم الدائرة
 active-color = لون مساحة العمل النشطة
 inactive-opacity = عتامة مساحات العمل غير النشطة
 spacing = التباعد بين مساحات العمل
+icons = أيقونات بدلاً من الأرقام
+search-symbols = ابحث عن الرموز
+no-nerd-font = لا يوجد خط Nerd Font مثبت

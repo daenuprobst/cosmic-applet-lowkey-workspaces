@@ -5,3 +5,6 @@ circle-size = Talha dels cercles
 active-color = Color de l'espaci de trabalh actiu
 inactive-opacity = Opacitat dels espacis de trabalh inactius
 spacing = Espaçament entre los espacis de trabalh
+icons = Icònas al lòc dels numèros
+search-symbols = Cercar de simbòls
+no-nerd-font = Cap de Nerd Font installada

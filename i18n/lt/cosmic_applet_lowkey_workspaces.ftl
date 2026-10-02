@@ -5,3 +5,6 @@ circle-size = Apskritimo dydis
 active-color = Aktyvios darbo srities spalva
 inactive-opacity = Neaktyvių darbo sričių neskaidrumas
 spacing = Tarpai tarp darbo sričių
+icons = Piktogramos vietoj numerių
+search-symbols = Ieškoti simbolių
+no-nerd-font = Neįdiegtas joks Nerd Font

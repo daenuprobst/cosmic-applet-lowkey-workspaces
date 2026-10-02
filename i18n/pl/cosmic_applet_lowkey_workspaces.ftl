@@ -5,3 +5,6 @@ circle-size = Rozmiar koła
 active-color = Kolor aktywnego obszaru roboczego
 inactive-opacity = Nieprzezroczystość nieaktywnych obszarów roboczych
 spacing = Odstęp między obszarami roboczymi
+icons = Ikony zamiast numerów
+search-symbols = Szukaj symboli
+no-nerd-font = Brak zainstalowanej czcionki Nerd Font

@@ -5,3 +5,6 @@ circle-size = વર્તુળનું કદ
 active-color = સક્રિય વર્કસ્પેસનો રંગ
 inactive-opacity = નિષ્ક્રિય વર્કસ્પેસની અપારદર્શકતા
 spacing = વર્કસ્પેસ વચ્ચેનું અંતર
+icons = નંબરને બદલે આઇકન
+search-symbols = ચિહ્નો શોધો
+no-nerd-font = કોઈ Nerd Font ઇન્સ્ટોલ નથી

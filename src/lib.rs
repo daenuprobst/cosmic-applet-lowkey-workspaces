@@ -4,6 +4,7 @@
 mod components;
 #[rustfmt::skip]
 mod config;
+mod glyphs;
 mod localize;
 mod wayland;
 mod wayland_subscription;

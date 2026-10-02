@@ -5,3 +5,6 @@ circle-size = Stærð hrings
 active-color = Litur virks vinnusvæðis
 inactive-opacity = Ógegnsæi óvirkra vinnusvæða
 spacing = Bil milli vinnusvæða
+icons = Tákn í stað talna
+search-symbols = Leita að táknum
+no-nerd-font = Ekkert Nerd Font uppsett

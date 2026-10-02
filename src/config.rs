@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 pub const APP_ID: &str = "dev.daenu.CosmicAppletLowkeyWorkspaces";
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, CosmicConfigEntry)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, CosmicConfigEntry)]
 #[version = 1]
 pub struct WorkspacesConfig {
     pub active_color: ActiveColor,
@@ -21,6 +21,8 @@ pub struct WorkspacesConfig {
     pub circle_size: Option<u16>,
     pub invert_numbers: bool,
     pub spacing: Option<u16>,
+    /// Per-workspace label replacing the number, empty keeps the number.
+    pub icons: Vec<String>,
 }
 
 impl Default for WorkspacesConfig {
@@ -33,6 +35,7 @@ impl Default for WorkspacesConfig {
             circle_size: None,
             invert_numbers: false,
             spacing: None,
+            icons: Vec::new(),
         }
     }
 }

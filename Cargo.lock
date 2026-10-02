@@ -919,6 +919,7 @@ version = "1.9.0"
 dependencies = [
  "anyhow",
  "cosmic-client-toolkit",
+ "fontdb",
  "futures",
  "i18n-embed",
  "i18n-embed-fl",
@@ -929,6 +930,7 @@ dependencies = [
  "tracing",
  "tracing-log",
  "tracing-subscriber",
+ "ttf-parser",
 ]
 
 [[package]]

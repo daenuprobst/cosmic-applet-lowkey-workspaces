@@ -5,3 +5,6 @@ circle-size = Cirkelstorlek
 active-color = Färg på aktiv arbetsyta
 inactive-opacity = Opacitet för inaktiva arbetsytor
 spacing = Avstånd mellan arbetsytor
+icons = Ikoner i stället för nummer
+search-symbols = Sök symboler
+no-nerd-font = Inget Nerd Font installerat

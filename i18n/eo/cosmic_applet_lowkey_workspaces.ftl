@@ -5,3 +5,6 @@ circle-size = Grando de cirklo
 active-color = Koloro de aktiva laborspaco
 inactive-opacity = Opakeco de neaktivaj laborspacoj
 spacing = Interspaco inter laborspacoj
+icons = Piktogramoj anstataŭ numeroj
+search-symbols = Serĉi simbolojn
+no-nerd-font = Neniu Nerd Font instalita

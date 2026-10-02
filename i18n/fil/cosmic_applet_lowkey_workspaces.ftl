@@ -5,3 +5,6 @@ circle-size = Laki ng bilog
 active-color = Kulay ng aktibong workspace
 inactive-opacity = Opacity ng mga hindi aktibong workspace
 spacing = Pagitan ng mga workspace
+icons = Mga icon sa halip na numero
+search-symbols = Maghanap ng mga simbolo
+no-nerd-font = Walang naka-install na Nerd Font

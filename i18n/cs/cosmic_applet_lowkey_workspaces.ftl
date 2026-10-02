@@ -5,3 +5,6 @@ circle-size = Velikost kruhu
 active-color = Barva aktivní pracovní plochy
 inactive-opacity = Neprůhlednost neaktivních pracovních ploch
 spacing = Rozestupy pracovních ploch
+icons = Ikony místo čísel
+search-symbols = Hledat symboly
+no-nerd-font = Není nainstalován žádný Nerd Font

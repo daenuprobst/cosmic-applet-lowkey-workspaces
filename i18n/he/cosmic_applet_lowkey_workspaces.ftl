@@ -5,3 +5,6 @@ circle-size = גודל העיגול
 active-color = צבע מרחב העבודה הפעיל
 inactive-opacity = אטימות מרחבי העבודה הלא פעילים
 spacing = מרווח בין מרחבי עבודה
+icons = סמלים במקום מספרים
+search-symbols = חיפוש סמלים
+no-nerd-font = לא מותקן Nerd Font

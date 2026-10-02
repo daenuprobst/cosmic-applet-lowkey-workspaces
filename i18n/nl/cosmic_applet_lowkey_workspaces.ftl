@@ -5,3 +5,6 @@ circle-size = Cirkelgrootte
 active-color = Kleur van actief werkblad
 inactive-opacity = Dekking van inactieve werkbladen
 spacing = Afstand tussen werkbladen
+icons = Pictogrammen in plaats van nummers
+search-symbols = Symbolen zoeken
+no-nerd-font = Geen Nerd Font geïnstalleerd

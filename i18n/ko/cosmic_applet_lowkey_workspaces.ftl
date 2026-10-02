@@ -5,3 +5,6 @@ circle-size = 원 크기
 active-color = 활성 작업 공간 색상
 inactive-opacity = 비활성 작업 공간 불투명도
 spacing = 작업 공간 간격
+icons = 숫자 대신 아이콘
+search-symbols = 기호 검색
+no-nerd-font = 설치된 Nerd Font가 없습니다

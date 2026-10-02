@@ -5,3 +5,6 @@ circle-size = ຂະໜາດວົງມົນ
 active-color = ສີຂອງພື້ນທີ່ເຮັດວຽກທີ່ໃຊ້ງານຢູ່
 inactive-opacity = ຄວາມທຶບຂອງພື້ນທີ່ເຮັດວຽກທີ່ບໍ່ໄດ້ໃຊ້ງານ
 spacing = ໄລຍະຫ່າງລະຫວ່າງພື້ນທີ່ເຮັດວຽກ
+icons = ໄອຄອນແທນຕົວເລກ
+search-symbols = ຊອກຫາສັນຍາລັກ
+no-nerd-font = ບໍ່ມີ Nerd Font ຕິດຕັ້ງ

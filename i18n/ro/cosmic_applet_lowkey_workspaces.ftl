@@ -5,3 +5,6 @@ circle-size = Dimensiunea cercului
 active-color = Culoarea spațiului de lucru activ
 inactive-opacity = Opacitatea spațiilor de lucru inactive
 spacing = Spațierea dintre spațiile de lucru
+icons = Pictograme în loc de numere
+search-symbols = Caută simboluri
+no-nerd-font = Niciun Nerd Font instalat

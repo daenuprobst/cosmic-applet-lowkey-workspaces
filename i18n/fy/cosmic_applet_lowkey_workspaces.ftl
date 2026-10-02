@@ -5,3 +5,6 @@ circle-size = Sirkelgrutte
 active-color = Kleur fan de aktive wurkromte
 inactive-opacity = Ûntrochsichtichheid fan ynaktive wurkromten
 spacing = Ôfstân tusken wurkromten
+icons = Ikoanen yn plak fan nûmers
+search-symbols = Symboalen sykje
+no-nerd-font = Gjin Nerd Font ynstallearre

@@ -5,3 +5,6 @@ circle-size = اندازه دایره
 active-color = رنگ محیط کاری فعال
 inactive-opacity = کدری محیط‌های کاری غیرفعال
 spacing = فاصله بین محیط‌های کاری
+icons = نمادها به جای اعداد
+search-symbols = جستجوی نمادها
+no-nerd-font = هیچ Nerd Font نصب نشده است

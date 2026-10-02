@@ -5,3 +5,6 @@ circle-size = Zirkuluaren tamaina
 active-color = Lan-eremu aktiboaren kolorea
 inactive-opacity = Lan-eremu inaktiboen opakotasuna
 spacing = Lan-eremuen arteko tartea
+icons = Ikonoak zenbakien ordez
+search-symbols = Bilatu ikurrak
+no-nerd-font = Ez dago Nerd Font-ik instalatuta

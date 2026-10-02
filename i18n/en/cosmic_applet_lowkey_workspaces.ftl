@@ -5,3 +5,6 @@ circle-size = Circle size
 active-color = Active workspace colour
 inactive-opacity = Inactive workspace opacity
 spacing = Workspace spacing
+icons = Icons instead of numbers
+search-symbols = Search symbols
+no-nerd-font = No Nerd Font installed

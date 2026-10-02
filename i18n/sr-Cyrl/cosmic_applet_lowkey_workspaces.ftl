@@ -5,3 +5,6 @@ circle-size = Величина круга
 active-color = Боја активног радног простора
 inactive-opacity = Непровидност неактивних радних простора
 spacing = Размак између радних простора
+icons = Иконе уместо бројева
+search-symbols = Претрага симбола
+no-nerd-font = Ниједан Nerd Font није инсталиран

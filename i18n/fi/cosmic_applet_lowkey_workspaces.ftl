@@ -5,3 +5,6 @@ circle-size = Ympyrän koko
 active-color = Aktiivisen työtilan väri
 inactive-opacity = Passiivisten työtilojen peittävyys
 spacing = Työtilojen välistys
+icons = Kuvakkeet numeroiden sijaan
+search-symbols = Hae symboleja
+no-nerd-font = Nerd Fontia ei ole asennettu

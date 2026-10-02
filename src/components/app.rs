@@ -27,12 +27,15 @@ use cosmic::{
     },
     scroll::DiscreteScrollState,
     surface,
-    widget::{Id, autosize, container, divider, mouse_area, slider, space, text, toggler},
+    widget::{
+        Id, autosize, container, divider, icon, mouse_area, search_input, slider, space, text,
+        text_input, toggler, tooltip,
+    },
 };
 
 use crate::{
     config::{self, ActiveColor, WorkspacesConfig},
-    fl,
+    fl, glyphs,
     wayland::WorkspaceEvent,
     wayland_subscription::{WorkspacesUpdate, workspaces},
 };
@@ -45,7 +48,7 @@ const SCROLL_RATE_LIMIT: Duration = Duration::from_millis(200);
 
 /// Color of a workspace number or dot.
 fn label_color(
-    config: WorkspacesConfig,
+    config: &WorkspacesConfig,
     state: ext_workspace_handle_v1::State,
     theme: &Theme,
 ) -> Color {
@@ -87,6 +90,11 @@ struct LowkeyWorkspacesApplet {
     scroll: DiscreteScrollState,
     config: WorkspacesConfig,
     popup: Option<window::Id>,
+    /// Workspace whose symbol picker is open.
+    picker: Option<usize>,
+    query: String,
+    /// Loaded on first picker open.
+    symbols: Option<Vec<(char, String)>>,
 }
 
 impl LowkeyWorkspacesApplet {
@@ -101,6 +109,52 @@ impl LowkeyWorkspacesApplet {
         self.config
             .circle_size
             .unwrap_or(self.core.applet.suggested_size(true).0 + 4)
+    }
+
+    /// Search field and a grid of matching Nerd Font symbols for workspace `i`.
+    fn symbol_picker(&self, i: usize) -> Element<'_, Message> {
+        let query = self.query.to_lowercase();
+        let symbols = self.symbols.as_deref().unwrap_or_default();
+        // First 60 matches only, a full grid of ~10k buttons is too slow.
+        let matches: Vec<_> = symbols
+            .iter()
+            .filter(|(_, name)| name.contains(&query))
+            .take(60)
+            .collect();
+        let grid = column(matches.chunks(10).map(|chunk| {
+            row(chunk.iter().map(|(c, name)| {
+                tooltip(
+                    cosmic::widget::button::custom(
+                        text(c.to_string())
+                            .size(20)
+                            .width(Length::Fixed(24.0))
+                            .align_x(Alignment::Center),
+                    )
+                    .padding(4)
+                    .class(cosmic::theme::Button::Text)
+                    .on_press(Message::SetIcon(i, c.to_string())),
+                    text::body(name),
+                    tooltip::Position::Top,
+                )
+                .into()
+            }))
+            .spacing(2)
+            .into()
+        }))
+        .spacing(2);
+        let status =
+            (self.symbols.is_some() && symbols.is_empty()).then(|| text::body(fl!("no-nerd-font")));
+        padded_control(
+            column![
+                search_input(fl!("search-symbols"), &self.query)
+                    .on_input(Message::PickerQuery)
+                    .on_clear(Message::PickerQuery(String::new())),
+            ]
+            .push_maybe(status)
+            .push(grid)
+            .spacing(8),
+        )
+        .into()
     }
 
     /// returns the index of the workspace button after which which must be moved to a popup
@@ -138,6 +192,10 @@ enum Message {
     CloseRequested(window::Id),
     ConfigChanged(WorkspacesConfig),
     SetConfig(WorkspacesConfig),
+    SetIcon(usize, String),
+    TogglePicker(usize),
+    PickerQuery(String),
+    SymbolsLoaded(Vec<(char, String)>),
 }
 
 impl cosmic::Application for LowkeyWorkspacesApplet {
@@ -161,6 +219,9 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                     .map(|c| WorkspacesConfig::get_entry(&c).unwrap_or_else(|(_, c)| c))
                     .unwrap_or_default(),
                 popup: None,
+                picker: None,
+                query: String::new(),
+                symbols: None,
             },
             Task::none(),
         )
@@ -250,6 +311,33 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
             Message::ConfigChanged(c) => {
                 self.config = c;
             }
+            Message::SetIcon(i, icon) => {
+                let mut config = self.config.clone();
+                config
+                    .icons
+                    .resize(config.icons.len().max(i + 1), String::new());
+                config.icons[i] = icon;
+                self.picker = None;
+                return self.update(Message::SetConfig(config));
+            }
+            Message::TogglePicker(i) => {
+                self.picker = (self.picker != Some(i)).then_some(i);
+                self.query.clear();
+                if self.picker.is_some() && self.symbols.is_none() {
+                    self.symbols = Some(Vec::new());
+                    // Takes about a second, keep it off the UI thread.
+                    return Task::perform(
+                        async {
+                            let (tx, rx) = futures::channel::oneshot::channel();
+                            std::thread::spawn(|| tx.send(glyphs::nerd_font_symbols()));
+                            rx.await.unwrap_or_default()
+                        },
+                        |symbols| cosmic::Action::App(Message::SymbolsLoaded(symbols)),
+                    );
+                }
+            }
+            Message::PickerQuery(query) => self.query = query,
+            Message::SymbolsLoaded(symbols) => self.symbols = Some(symbols),
             Message::SetConfig(c) => {
                 self.config = c;
                 if let Ok(helper) =
@@ -285,14 +373,23 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
         let suggested_window_size = self.core.applet.suggested_window_size();
         let popup_index = self.popup_index().unwrap_or(self.workspaces.len());
 
-        let buttons = self.workspaces[..popup_index].iter().map(|w| {
-            let config = self.config;
+        let shown = &self.workspaces[..popup_index];
+        let buttons = shown.iter().enumerate().map(|(i, w)| {
+            let config = self.config.clone();
             let hover_config = WorkspacesConfig {
                 inactive_opacity: (config.inactive_opacity + 0.2).min(1.0),
-                ..config
+                ..config.clone()
             };
             let state = w.state;
-            let label = if config.show_dots { "●" } else { &w.name };
+            let label = if config.show_dots {
+                "●"
+            } else {
+                self.config
+                    .icons
+                    .get(i)
+                    .filter(|icon| !icon.is_empty())
+                    .unwrap_or(&w.name)
+            };
             let content = self.core.applet.text(label).font(cosmic::font::bold());
 
             let (width, height) = if self.core.applet.is_horizontal() {
@@ -370,7 +467,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                         },
                     ))
                 } else {
-                    let style = move |theme: &Theme, config| {
+                    let style = move |theme: &Theme, config: &WorkspacesConfig| {
                         let color = label_color(config, state, theme);
                         let radius = if circle {
                             [diameter as f32 / 2.0; 4]
@@ -392,8 +489,8 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                             ..button::Style::default()
                         }
                     };
-                    let appearance = move |theme: &Theme| style(theme, config);
-                    let hovered = move |theme: &Theme| style(theme, hover_config);
+                    let appearance = move |theme: &Theme| style(theme, &config);
+                    let hovered = move |theme: &Theme| style(theme, &hover_config);
                     cosmic::theme::iced::Button::Custom(Box::new(
                         move |theme, status| match status {
                             button::Status::Active => appearance(theme),
@@ -472,7 +569,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
     }
 
     fn view_window(&self, _id: window::Id) -> Element<'_, Message> {
-        let config = self.config;
+        let config = &self.config;
         let swatch = |color: ActiveColor| -> Element<'_, Message> {
             let selected = color == config.active_color;
             button(space::horizontal().width(Length::Fixed(24.0)))
@@ -480,7 +577,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 .padding(0)
                 .on_press(Message::SetConfig(WorkspacesConfig {
                     active_color: color,
-                    ..config
+                    ..config.clone()
                 }))
                 .class(cosmic::theme::iced::Button::Custom(Box::new(
                     move |theme, _| button::Style {
@@ -523,7 +620,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 toggler(config.show_dots).on_toggle(move |show_dots| Message::SetConfig(
                     WorkspacesConfig {
                         show_dots,
-                        ..config
+                        ..config.clone()
                     }
                 )),
             ]
@@ -537,7 +634,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                     toggler(config.show_circles).on_toggle(move |show_circles| {
                         Message::SetConfig(WorkspacesConfig {
                             show_circles,
-                            ..config
+                            ..config.clone()
                         })
                     }),
                 ]
@@ -553,7 +650,7 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                         toggler(config.invert_numbers).on_toggle(move |invert_numbers| {
                             Message::SetConfig(WorkspacesConfig {
                                 invert_numbers,
-                                ..config
+                                ..config.clone()
                             })
                         }),
                     ]
@@ -563,45 +660,69 @@ impl cosmic::Application for LowkeyWorkspacesApplet {
                 padded_control(slider(8..=32, self.circle_size(), move |size| {
                     Message::SetConfig(WorkspacesConfig {
                         circle_size: Some(size),
-                        ..config
+                        ..config.clone()
                     })
                 })),
             ]
         }));
 
-        let content = column![
-            display,
-            padded_control(divider::horizontal::default()),
-            padded_control(text::heading(fl!("active-color"))),
-            padded_control(swatches),
-            padded_control(divider::horizontal::default()),
-            heading_with_value(
+        // One input per workspace, empty keeps the number.
+        let icons = (!config.show_dots).then(|| {
+            column![padded_control(text::heading(fl!("icons")))]
+                .extend(self.workspaces.iter().enumerate().map(|(i, w)| {
+                    let input = row![
+                        text_input(&w.name, config.icons.get(i).map_or("", String::as_str))
+                            .on_input(move |icon| Message::SetIcon(i, icon)),
+                        cosmic::widget::button::icon(icon::from_name("edit-find-symbolic"))
+                            .on_press(Message::TogglePicker(i)),
+                    ]
+                    .spacing(8)
+                    .align_y(Alignment::Center);
+                    column![padded_control(input)]
+                        .push_maybe((self.picker == Some(i)).then(|| self.symbol_picker(i)))
+                        .into()
+                }))
+                .push(padded_control(divider::horizontal::default()))
+        });
+
+        let content = column![display, padded_control(divider::horizontal::default()),]
+            .push_maybe(icons)
+            .push(padded_control(text::heading(fl!("active-color"))))
+            .push(padded_control(swatches))
+            .push(padded_control(divider::horizontal::default()))
+            .push(heading_with_value(
                 fl!("inactive-opacity"),
-                format!("{:.0}%", config.inactive_opacity * 100.0)
-            ),
-            padded_control(
+                format!("{:.0}%", config.inactive_opacity * 100.0),
+            ))
+            .push(padded_control(
                 slider(
                     0.2..=1.0,
                     config.inactive_opacity,
                     move |inactive_opacity| {
                         Message::SetConfig(WorkspacesConfig {
                             inactive_opacity,
-                            ..config
+                            ..config.clone()
                         })
-                    }
+                    },
                 )
-                .step(0.05)
-            ),
-            padded_control(divider::horizontal::default()),
-            heading_with_value(fl!("spacing"), format!("{} px", self.spacing())),
-            padded_control(slider(0..=16, self.spacing(), move |spacing| {
-                Message::SetConfig(WorkspacesConfig {
-                    spacing: Some(spacing),
-                    ..config
-                })
-            })),
-        ]
-        .padding([8, 0]);
+                .step(0.05),
+            ))
+            .push(padded_control(divider::horizontal::default()))
+            .push(heading_with_value(
+                fl!("spacing"),
+                format!("{} px", self.spacing()),
+            ))
+            .push(padded_control(slider(
+                0..=16,
+                self.spacing(),
+                move |spacing| {
+                    Message::SetConfig(WorkspacesConfig {
+                        spacing: Some(spacing),
+                        ..config.clone()
+                    })
+                },
+            )))
+            .padding([8, 0]);
 
         self.core.applet.popup_container(container(content)).into()
     }

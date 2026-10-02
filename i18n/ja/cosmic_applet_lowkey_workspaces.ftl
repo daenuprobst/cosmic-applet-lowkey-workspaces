@@ -5,3 +5,6 @@ circle-size = 円のサイズ
 active-color = アクティブなワークスペースの色
 inactive-opacity = 非アクティブなワークスペースの不透明度
 spacing = ワークスペースの間隔
+icons = 数字の代わりにアイコン
+search-symbols = 記号を検索
+no-nerd-font = Nerd Font がインストールされていません

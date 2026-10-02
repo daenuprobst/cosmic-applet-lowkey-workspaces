@@ -5,3 +5,6 @@ circle-size = ਗੋਲੇ ਦਾ ਆਕਾਰ
 active-color = ਸਰਗਰਮ ਵਰਕਸਪੇਸ ਦਾ ਰੰਗ
 inactive-opacity = ਨਾ-ਸਰਗਰਮ ਵਰਕਸਪੇਸਾਂ ਦੀ ਅਪਾਰਦਰਸ਼ਤਾ
 spacing = ਵਰਕਸਪੇਸਾਂ ਵਿਚਕਾਰ ਫ਼ਾਸਲਾ
+icons = ਨੰਬਰਾਂ ਦੀ ਥਾਂ ਆਈਕਨ
+search-symbols = ਚਿੰਨ੍ਹ ਖੋਜੋ
+no-nerd-font = ਕੋਈ Nerd Font ਇੰਸਟਾਲ ਨਹੀਂ

@@ -5,3 +5,6 @@ circle-size = Kích thước hình tròn
 active-color = Màu của không gian làm việc đang hoạt động
 inactive-opacity = Độ mờ đục của không gian làm việc không hoạt động
 spacing = Khoảng cách giữa các không gian làm việc
+icons = Biểu tượng thay cho số
+search-symbols = Tìm ký hiệu
+no-nerd-font = Chưa cài Nerd Font

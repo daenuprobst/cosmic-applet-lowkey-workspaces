@@ -5,3 +5,6 @@ circle-size = Doira o‘lchami
 active-color = Faol ish maydoni rangi
 inactive-opacity = Nofaol ish maydonlarining noshaffofligi
 spacing = Ish maydonlari orasidagi masofa
+icons = Raqamlar oʻrniga belgilar
+search-symbols = Belgilarni qidirish
+no-nerd-font = Nerd Font oʻrnatilmagan

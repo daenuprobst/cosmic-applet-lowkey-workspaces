@@ -5,3 +5,6 @@ circle-size = 圓形大小
 active-color = 使用中工作區的顏色
 inactive-opacity = 非使用中工作區的不透明度
 spacing = 工作區間距
+icons = 以圖示取代數字
+search-symbols = 搜尋符號
+no-nerd-font = 未安裝 Nerd Font

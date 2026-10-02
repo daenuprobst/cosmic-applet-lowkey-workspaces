@@ -5,3 +5,6 @@ circle-size = Ukuran lingkaran
 active-color = Warna ruang kerja aktif
 inactive-opacity = Opasitas ruang kerja tidak aktif
 spacing = Jarak antar ruang kerja
+icons = Ikon sebagai ganti angka
+search-symbols = Cari simbol
+no-nerd-font = Tidak ada Nerd Font yang terpasang

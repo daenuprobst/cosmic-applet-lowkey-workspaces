@@ -5,3 +5,6 @@ circle-size = Meud a’ chearcaill
 active-color = Dath an àite-obrach ghnìomhaich
 inactive-opacity = Neo-thrìd-shoilleireachd nan àiteachan-obrach neo-ghnìomhach
 spacing = Beàrn eadar àiteachan-obrach
+icons = Ìomhaigheagan an àite àireamhan
+search-symbols = Lorg samhlaidhean
+no-nerd-font = Chan eil Nerd Font stàlaichte

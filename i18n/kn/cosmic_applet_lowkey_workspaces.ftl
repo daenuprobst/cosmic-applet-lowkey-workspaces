@@ -5,3 +5,6 @@ circle-size = ವೃತ್ತದ ಗಾತ್ರ
 active-color = ಸಕ್ರಿಯ ಕಾರ್ಯಕ್ಷೇತ್ರದ ಬಣ್ಣ
 inactive-opacity = ನಿಷ್ಕ್ರಿಯ ಕಾರ್ಯಕ್ಷೇತ್ರಗಳ ಅಪಾರದರ್ಶಕತೆ
 spacing = ಕಾರ್ಯಕ್ಷೇತ್ರಗಳ ನಡುವಿನ ಅಂತರ
+icons = ಸಂಖ್ಯೆಗಳ ಬದಲು ಐಕಾನ್‌ಗಳು
+search-symbols = ಚಿಹ್ನೆಗಳನ್ನು ಹುಡುಕಿ
+no-nerd-font = ಯಾವುದೇ Nerd Font ಸ್ಥಾಪಿಸಲಾಗಿಲ್ಲ

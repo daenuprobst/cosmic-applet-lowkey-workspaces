@@ -5,3 +5,6 @@ circle-size = Méid an chiorcail
 active-color = Dath an spáis oibre ghníomhaigh
 inactive-opacity = Teimhneacht na spásanna oibre neamhghníomhacha
 spacing = Spásáil idir spásanna oibre
+icons = Deilbhíní in ionad uimhreacha
+search-symbols = Cuardaigh siombailí
+no-nerd-font = Níl aon Nerd Font suiteáilte

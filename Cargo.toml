@@ -8,6 +8,7 @@ license = "GPL-3.0-only"
 [dependencies]
 anyhow = "1.0.102"
 cctk = { git = "https://github.com/pop-os/cosmic-protocols", package = "cosmic-client-toolkit", rev = "c0cff4d" }
+fontdb = "0.23"
 futures = "0.3"
 i18n-embed = { version = "0.16.0", features = ["fluent-system", "desktop-requester"] }
 i18n-embed-fl = "0.10"
@@ -27,6 +28,7 @@ tokio = { version = "1.49.0", features = ["full"] }
 tracing = "0.1"
 tracing-log = "0.2.0"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+ttf-parser = "0.25"
 
 [profile.release]
 opt-level = 3
