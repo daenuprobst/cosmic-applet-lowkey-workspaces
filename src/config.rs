@@ -9,7 +9,7 @@ use cosmic::{
 };
 use serde::{Deserialize, Serialize};
 
-pub const APP_ID: &str = "dev.daenu.CosmicAppletLowkeyWorkspaces";
+pub const APP_ID: &str = "dev.daenu.CosmicExtAppletLowkeyWorkspaces";
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, CosmicConfigEntry)]
 #[version = 1]

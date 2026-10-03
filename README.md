@@ -10,6 +10,10 @@ Install (needs Rust and just):
 
 Then add Lowkey Workspaces to your panel in COSMIC Settings.
 
+Or as a Flatpak (needs flatpak-builder):
+
+    flatpak-builder --user --install --force-clean build-dir dev.daenu.CosmicExtAppletLowkeyWorkspaces.json
+
 Uninstall:
 
     just uninstall

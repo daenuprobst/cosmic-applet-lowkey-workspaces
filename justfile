@@ -1,5 +1,5 @@
-name := 'cosmic-applet-lowkey-workspaces'
-appid := 'dev.daenu.CosmicAppletLowkeyWorkspaces'
+name := 'cosmic-ext-applet-lowkey-workspaces'
+appid := 'dev.daenu.CosmicExtAppletLowkeyWorkspaces'
 
 prefix := env('HOME') / '.local'
 bin-dst := prefix / 'bin' / name

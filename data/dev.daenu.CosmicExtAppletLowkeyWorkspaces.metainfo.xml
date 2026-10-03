@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>dev.daenu.CosmicExtAppletLowkeyWorkspaces</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  <developer id="dev.daenu">
+    <name>Daniel Probst</name>
+  </developer>
+  <update_contact>daenuprobst@gmail.com</update_contact>
+  <name>Lowkey Workspaces</name>
+  <summary>Numbered workspaces for the COSMIC™ panel</summary>
+  <description>
+    <p>Fork of the COSMIC™ Numbered Workspaces applet. The active workspace just gets a coloured number instead of the accent circle.</p>
+    <p>Right click it to change the colour, fade inactive workspaces, show dots instead of numbers or adjust the spacing.</p>
+  </description>
+  <url type="homepage">https://github.com/daenuprobst/cosmic-ext-applet-lowkey-workspaces</url>
+  <url type="bugtracker">https://github.com/daenuprobst/cosmic-ext-applet-lowkey-workspaces/issues</url>
+  <url type="vcs-browser">https://github.com/daenuprobst/cosmic-ext-applet-lowkey-workspaces</url>
+  <icon type="stock">dev.daenu.CosmicExtAppletLowkeyWorkspaces</icon>
+  <launchable type="desktop-id">dev.daenu.CosmicExtAppletLowkeyWorkspaces.desktop</launchable>
+  <content_rating type="oars-1.1"/>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/daenuprobst/cosmic-ext-applet-lowkey-workspaces/main/assets/preview.jpg</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.9.0" date="2026-10-02"/>
+  </releases>
+  <provides>
+    <id>com.system76.CosmicApplet</id>
+    <binary>cosmic-ext-applet-lowkey-workspaces</binary>
+  </provides>
+  <categories>
+    <category>Utility</category>
+  </categories>
+</component>

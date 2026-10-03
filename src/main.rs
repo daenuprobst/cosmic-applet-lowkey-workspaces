@@ -10,5 +10,5 @@ fn main() -> cosmic::iced::Result {
 
     tracing::info!("Starting Lowkey Workspaces applet with version {VERSION}");
 
-    cosmic_applet_lowkey_workspaces::run()
+    cosmic_ext_applet_lowkey_workspaces::run()
 }
